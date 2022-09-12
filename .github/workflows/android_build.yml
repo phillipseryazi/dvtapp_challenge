@@ -1,0 +1,22 @@
+name: Build on push
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - name: Setup JDK
+        uses: actions/setup-java@v2.5.0
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Load maps api key
+        env:
+          MAPS_KEY: ${{secrets.MAPS_KEY}}
+        run: echo MAPS_KEY=$MAPS_KEY > ./local.properties
+      - name: Run tests
+        run: bash ./gradlew test
+      - name: Build release
+        run: bash ./gradlew assembleDebug
